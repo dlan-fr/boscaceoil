@@ -28,40 +28,32 @@ package
 	  	
 	 	public function Applicationlinux()
 		{
-			//Debugger.setParent(this, true);
-			//debug('started in ' + this);
+				//Debugger.setParent(this, true);
 		
 			//NativeApplication.nativeApplication.setAsDefaultApplication("ceol");
-			//NativeApplication.nativeApplication.addEventListener(InvokeEvent.INVOKE, onInvokeEvent);
+			NativeApplication.nativeApplication.addEventListener(InvokeEvent.INVOKE, onInvokeEvent);
 			stage.scaleMode = StageScaleMode.NO_SCALE;
 			stage.align = StageAlign.TOP_LEFT;
-
-			//debug('set native');
 			
 			key = new KeyPoll(stage);
-//debug('set keypoll');
 			control = new controlclass();
-//debug('set control');
 			gfx.init();
-//debug('set gfx');
 			var tempbmp:Bitmap;
 			tempbmp = new im_icons();	gfx.buffer = tempbmp.bitmapData;	gfx.makeiconarray();
 			gfx.buffer = new BitmapData(384, 240, false, 0x000000);
 			control.voicelist.fixlengths(gfx);
 			stage.fullScreenSourceRect = new Rectangle(0, 0, 768, 480);
 			addChild(gfx);
-//debug('set load screen');
 
 			
 			control.loadscreensettings(gfx);
 			updategraphicsmode(control);
-			//debug('add listener');
 			_timer.addEventListener(TimerEvent.TIMER, mainloop);
 			_timer.start();
 		}
 		public function _input():void {
-			control.mx = (mouseX / 2);
-			control.my = (mouseY / 2);
+			control.mx = (mouseX / gfx.screenscale);
+			control.my = (mouseY /  gfx.screenscale);
 				
 			input(key, gfx, control);
 		}

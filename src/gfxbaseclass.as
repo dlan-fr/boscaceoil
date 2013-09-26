@@ -5,14 +5,18 @@ package{
   import flash.net.*;
 	import flash.text.*;
 	import flash.display.NativeWindow;
+	import com.victordramba.console.*;
 	
 	public class gfxbaseclass extends Sprite {
+
+		private const base_screen_width:uint = 192;
+		private const base_screen_height:uint = 120;
 		//Initialise arrays here
 		public function initgfx():void {
 			//We initialise a few things
 			screenscale = 2;
 			
-			screenwidth = 384; screenheight = 240;
+			screenwidth = base_screen_width * screenscale; screenheight = base_screen_height * screenscale;
 			screenwidthmid = screenwidth / 2; screenheightmid = screenheight / 2;
 			screenviewwidth = screenwidth; screenviewheight = screenheight;
 			linesize = 10; patternheight = 12; patterncount = 54;
@@ -59,8 +63,10 @@ package{
 		public function changewindowsize(t:int):void {
 			screenscale = t;
 			if (stage && stage.nativeWindow) {
-				stage.nativeWindow.width = (screenwidth * t) + 18;
-				stage.nativeWindow.height = (screenheight * t) + 45;
+				stage.nativeWindow.width = (screenwidth * t);
+				stage.nativeWindow.height = (screenheight * t) + 30;
+				screen.scaleX = t;
+				screen.scaleY = t;	
 			}
 		}
 

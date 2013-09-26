@@ -19,7 +19,11 @@ package {
 		
 		public function clear():void {
 			for (var i:int = 0; i < 128; i++) {
-				notes[i].setTo(-1, 0, 0, 0);
+				notes[i].x = -1;
+				notes[i].y = 0;
+				notes[i].width = 0;
+				notes[i].height = 0;
+				//notes[i].setTo(-1, 0, 0, 0);
 			}
 			
 			for (i = 0; i < 16; i++) {
@@ -60,7 +64,11 @@ package {
 		
 		public function addnote(noteindex:int, note:int, time:int):void {
 			if (numnotes < 128) {
-				notes[numnotes].setTo(note, time, noteindex, 0);
+				notes[numnotes].x = note;
+				notes[numnotes].y = time;
+				notes[numnotes].width = noteindex;
+				notes[numnotes].height = 0;
+				//notes[numnotes].setTo(note, time, noteindex, 0);
 				numnotes++;
 			}
 			
