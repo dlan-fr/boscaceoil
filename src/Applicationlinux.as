@@ -90,11 +90,15 @@ package
 		
 		public function updategraphicsmode(control:controlclass):void {
 		 	if (control.fullscreen) {
+		 		//workaround of a bug that mess up rendering when switching back from fullscreen
+	 			gfx.screenscale = 2;
+				gfx.changewindowsize(2);
 				stage.displayState = StageDisplayState.FULL_SCREEN_INTERACTIVE;
 			}else {
+
 				stage.displayState = StageDisplayState.NORMAL;
+				
 			}
-			
 			control.savescreensettings(gfx);
 		}
 		
