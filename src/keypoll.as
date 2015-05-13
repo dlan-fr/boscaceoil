@@ -1,4 +1,4 @@
-public function generickeypoll(control:controlclass):void {
+public function generickeypoll():void {
 	control.press_up = false; control.press_down = false; 
   control.press_left = false; control.press_right = false; 
 	control.press_space = false; control.press_enter = false;
@@ -20,7 +20,7 @@ public function generickeypoll(control:controlclass):void {
 		control.fullscreentoggleheld = true;
 		if (control.fullscreen) {control.fullscreen = false;
 		}else { control.fullscreen = true; }
-		updategraphicsmode(control);
+		updategraphicsmode();
 	}
 	
 	if (control.fullscreentoggleheld) {
@@ -41,5 +41,11 @@ public function generickeypoll(control:controlclass):void {
 		}else {
 			control.keyheld = false;
 		}
+	}
+	
+	if (control.press_space || control.press_right || control.press_left || control.press_enter ||
+		  control.press_down || control.press_up) {
+		//Update screen when there is input.
+		gfx.updatebackground = 5;
 	}
 }

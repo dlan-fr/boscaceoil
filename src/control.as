@@ -14,48 +14,78 @@ package {
 	import flash.filesystem.*;
   import flash.net.FileFilter;
   import flash.system.Capabilities;
+	CONFIG::web {
+		import flash.external.ExternalInterface;
+		import mx.utils.Base64Encoder;
+	}
 		
-	public class controlclass extends Sprite{
-		public var SCALE_NORMAL:int = 0;
-		public var SCALE_MAJOR:int = 1;
-		public var SCALE_MINOR:int = 2;
-		public var SCALE_BLUES:int = 3;
-		public var SCALE_HARMONIC_MINOR:int = 4;
-		public var SCALE_PENTATONIC_MAJOR:int = 5;
-		public var SCALE_PENTATONIC_MINOR:int = 6;
-		public var SCALE_PENTATONIC_BLUES:int = 7;
-		public var SCALE_PENTATONIC_NEUTRAL:int = 8;
-		public var SCALE_ROMANIAN_FOLK:int = 9;
-		public var SCALE_SPANISH_GYPSY:int = 10;
-		public var SCALE_ARABIC_MAGAM:int = 11;
-		public var SCALE_CHINESE:int = 12;
-		public var SCALE_HUNGARIAN:int = 13;
-		public var CHORD_MAJOR:int = 14;
-		public var CHORD_MINOR:int = 15;
-		public var CHORD_5TH:int = 16;
-		public var CHORD_DOM_7TH:int = 17;
-		public var CHORD_MAJOR_7TH:int = 18;
-		public var CHORD_MINOR_7TH:int = 19;
-		public var CHORD_MINOR_MAJOR_7TH:int = 20;
-		public var CHORD_SUS4:int = 21;
-		public var CHORD_SUS2:int = 22;
+	public class control extends Sprite{
+		public static var SCALE_NORMAL:int = 0;
+		public static var SCALE_MAJOR:int = 1;
+		public static var SCALE_MINOR:int = 2;
+		public static var SCALE_BLUES:int = 3;
+		public static var SCALE_HARMONIC_MINOR:int = 4;
+		public static var SCALE_PENTATONIC_MAJOR:int = 5;
+		public static var SCALE_PENTATONIC_MINOR:int = 6;
+		public static var SCALE_PENTATONIC_BLUES:int = 7;
+		public static var SCALE_PENTATONIC_NEUTRAL:int = 8;
+		public static var SCALE_ROMANIAN_FOLK:int = 9;
+		public static var SCALE_SPANISH_GYPSY:int = 10;
+		public static var SCALE_ARABIC_MAGAM:int = 11;
+		public static var SCALE_CHINESE:int = 12;
+		public static var SCALE_HUNGARIAN:int = 13;
+		public static var CHORD_MAJOR:int = 14;
+		public static var CHORD_MINOR:int = 15;
+		public static var CHORD_5TH:int = 16;
+		public static var CHORD_DOM_7TH:int = 17;
+		public static var CHORD_MAJOR_7TH:int = 18;
+		public static var CHORD_MINOR_7TH:int = 19;
+		public static var CHORD_MINOR_MAJOR_7TH:int = 20;
+		public static var CHORD_SUS4:int = 21;
+		public static var CHORD_SUS2:int = 22;
 		
-		public var LIST_KEY:int = 0;
-		public var LIST_SCALE:int = 1;
-		public var LIST_INSTRUMENT:int = 2;
-		public var LIST_CATEGORY:int = 3;
-		public var LIST_SELECTINSTRUMENT:int = 4;
-		public var LIST_BUFFERSIZE:int = 5;
-		public var LIST_SCREENSIZE:int = 6;
-		public var LIST_EFFECTS:int = 7;
+		public static var LIST_KEY:int = 0;
+		public static var LIST_SCALE:int = 1;
+		public static var LIST_INSTRUMENT:int = 2;
+		public static var LIST_CATEGORY:int = 3;
+		public static var LIST_SELECTINSTRUMENT:int = 4;
+		public static var LIST_BUFFERSIZE:int = 5;
+		public static var LIST_MOREEXPORTS:int = 6;
+		public static var LIST_EFFECTS:int = 7;
+		public static var LIST_EXPORTS:int = 8;
+		public static var LIST_MIDIINSTRUMENT:int = 9;
+		public static var LIST_MIDI_0_PIANO:int = 10;
+		public static var LIST_MIDI_1_BELLS:int = 11;
+		public static var LIST_MIDI_2_ORGAN:int = 12;
+		public static var LIST_MIDI_3_GUITAR:int = 13;
+		public static var LIST_MIDI_4_BASS:int = 14;
+		public static var LIST_MIDI_5_STRINGS:int = 15;
+		public static var LIST_MIDI_6_ENSEMBLE:int = 16;
+		public static var LIST_MIDI_7_BRASS:int = 17;
+		public static var LIST_MIDI_8_REED:int = 18;
+		public static var LIST_MIDI_9_PIPE:int = 19;
+		public static var LIST_MIDI_10_SYNTHLEAD:int = 20;
+		public static var LIST_MIDI_11_SYNTHPAD:int = 21;
+		public static var LIST_MIDI_12_SYNTHEFFECTS:int = 22;
+		public static var LIST_MIDI_13_WORLD:int = 23;
+		public static var LIST_MIDI_14_PERCUSSIVE:int = 24;
+		public static var LIST_MIDI_15_SOUNDEFFECTS:int = 25;
 		
-		public function controlclass():void {
-			version = 3;
+		public static var MENUTAB_FILE:int = 0;
+		public static var MENUTAB_ARRANGEMENTS:int = 1;
+		public static var MENUTAB_INSTRUMENTS:int = 2;
+		public static var MENUTAB_ADVANCED:int = 3;
+		public static var MENUTAB_CREDITS:int = 4;
+		public static var MENUTAB_HELP:int = 5;
+		
+		public static function init():void {
 			clicklist = false;
+			clicksecondlist = false;
+			midilistselection = -1;
+			savescreencountdown = 0;
 			
 			test = false; teststring = "TEST = True";
 			patternmanagerview = 0;
-			currenttab = 0;
 			dragaction = 0;
 			trashbutton = 0;
 			bpm = 120;
@@ -65,7 +95,7 @@ package {
 				scale.push(int(1));
 			}
 			
-			for (i = 0; i < 128; i++) {
+			for (i = 0; i < 256; i++) {
 				pianoroll.push(i);
 				invertpianoroll.push(i);
 			}
@@ -121,8 +151,8 @@ package {
 			voicelist = new voicelistclass();
 			
 			//Setup drumkits
-			drumkit.push(new drumkitclass()); //Midi Drums
-			drumkit.push(new drumkitclass()); //Midi Drums
+			drumkit.push(new drumkitclass());
+			drumkit.push(new drumkitclass());
 			drumkit.push(new drumkitclass()); //Midi Drums
 			createdrumkit(0);
 			createdrumkit(1);
@@ -134,6 +164,7 @@ package {
 				  instrument[i].voice = _presets["midi.piano1"];
 				}else {
 					voicelist.index = int(Math.random() * voicelist.listsize);
+					instrument[i].index = voicelist.index;
 					instrument[i].voice = _presets[voicelist.voice[voicelist.index]];
 					instrument[i].category = voicelist.category[voicelist.index];
 					instrument[i].name = voicelist.name[voicelist.index];
@@ -144,7 +175,7 @@ package {
 			numinstrument = 1;
 			instrumentmanagerview = 0;
 			
-			for (i = 0; i < 128; i++) {
+			for (i = 0; i < 4096; i++) {
 			  musicbox.push(new musicphraseclass());
 			}
 			numboxes = 1;
@@ -201,18 +232,20 @@ package {
 			_driver.play(null, false);
 			
 			startup = 1;
-			if (invokefile != "null") {
-				invokeceol(invokefile);
-				invokefile = "null";
+			CONFIG::desktop {
+				if (invokefile != "null") {
+					invokeceol(invokefile);
+					invokefile = "null";
+				}
 			}
 		}
 		
-		public function notecut():void {
+		public static function notecut():void {
 			//This is broken, try to fix later
 			//for each (var trk:SiMMLTrack in _driver.sequencer.tracks) trk.keyOff();
 		}
 			
-		public function updateeffects():void {
+		public static function updateeffects():void {
 			//So, I can't see to figure out WHY only one effect at a time seems to work.
 			//If anyone else can, please, by all means update this code!
 			
@@ -246,7 +279,7 @@ package {
 			effectname.push("HIGH PASS");  */
 		}
 		
-		public function _onTimerInterruption():void {
+		public static function _onTimerInterruption():void {
 			if(musicplaying){
 				if (looptime >= boxcount) {
 					looptime-= boxcount;
@@ -314,7 +347,7 @@ package {
 			}
 		}
 		
-	  private function SetSwing():void{  
+	  private static function SetSwing():void{  
       if (_driver == null) return;
       
       //swing goes from -10 to 10
@@ -339,8 +372,15 @@ package {
 			}
     }
 		
-		public function loadscreensettings(gfx:graphicsclass):void {
+		public static function loadscreensettings():void {
 			programsettings = SharedObject.getLocal("boscaceoil_settings");		
+			
+			if (programsettings.data.firstrun == null) {
+				guiclass.firstrun = true;
+				programsettings.data.firstrun = 1;
+			}else {
+				guiclass.firstrun = false;
+			}
 			
 			if (programsettings.data.fullscreen == 0) {
 				fullscreen = false;
@@ -348,14 +388,30 @@ package {
 				fullscreen = true;
 			}
 			
-			gfx.changewindowsize(programsettings.data.windowsize);
+			if (programsettings.data.scalemode == null) {
+				gfx.changescalemode(0);
+			}else{
+				gfx.changescalemode(programsettings.data.scalemode);
+			}
+			
+			if (programsettings.data.windowwidth == null) {
+				gfx.windowwidth = 768;
+				gfx.windowheight = 560;
+			}else {
+				gfx.windowwidth = programsettings.data.windowwidth;
+				gfx.windowheight = programsettings.data.windowheight;
+			}
+			
+			gfx.changewindowsize(gfx.windowwidth, gfx.windowheight);
 			
 			programsettings.flush();
 			programsettings.close();
 		}
 		
-		public function savescreensettings(gfx:graphicsclass):void {
+		public static function savescreensettings():void {
 			programsettings = SharedObject.getLocal("boscaceoil_settings");		
+			
+			programsettings.data.firstrun = 1;
 			
 			if (!fullscreen){
 				programsettings.data.fullscreen = 0;
@@ -363,13 +419,15 @@ package {
 				programsettings.data.fullscreen = 1;
 			}
 			
-			programsettings.data.windowsize = gfx.screenscale;
+			programsettings.data.scalemode = gfx.scalemode;
+			programsettings.data.windowwidth = gfx.windowwidth;
+			programsettings.data.windowheight = gfx.windowheight;
 			
 			programsettings.flush();
 			programsettings.close();
 		}
 		
-		public function setbuffersize(t:int):void {
+		public static function setbuffersize(t:int):void {
 			if (t == 0) buffersize = 2048;
 			if (t == 1) buffersize = 4096;
 			if (t == 2) buffersize = 8192;
@@ -380,15 +438,27 @@ package {
 			programsettings.close();
 		}
 		
-		public function adddrumkitnote(t:int, name:String, voice:String, note:int = 60):void {
+		public static function adddrumkitnote(t:int, name:String, voice:String, note:int = 60):void {
 			if (t == 2 && note == 60) note = 16;
 			drumkit[t].voicelist.push(_presets[voice]);
       drumkit[t].voicename.push(name);
       drumkit[t].voicenote.push(note);
+			if (t == 2) {
+				//Midi drumkit
+				var voicenum:String = "";
+				var afterdot:Boolean = false;
+				for (var i:int = 0; i < voice.length; i++) {
+					if (afterdot) {
+						voicenum = voicenum + voice.charAt(i);
+					}
+					if (i >= 8) afterdot = true;
+				}
+				drumkit[t].midivoice.push(int(voicenum));
+			}
 			drumkit[t].size++;
 		}
 		
-		public function createdrumkit(t:int):void {
+		public static function createdrumkit(t:int):void {
 			//Create Drumkit t at index
 			switch(t) {
 				case 0:
@@ -448,11 +518,11 @@ package {
 				case 2:
 					//MIDI DRUMS
 					drumkit[2].kitname = "Midi Drumkit";
-					adddrumkitnote(2, "Seq Click H", "midi.drum24");
-					adddrumkitnote(2, "Brush Tap", "midi.drum25");
-					adddrumkitnote(2, "Brush Swirl", "midi.drum26");
-					adddrumkitnote(2, "Brush Slap", "midi.drum27");
-					adddrumkitnote(2, "Brush Tap Swirl", "midi.drum28");
+					adddrumkitnote(2, "Seq Click H", "midi.drum24", 24);
+					adddrumkitnote(2, "Brush Tap", "midi.drum25", 25);
+					adddrumkitnote(2, "Brush Swirl", "midi.drum26", 26);
+					adddrumkitnote(2, "Brush Slap", "midi.drum27", 27);
+					adddrumkitnote(2, "Brush Tap Swirl", "midi.drum28", 28);
 					adddrumkitnote(2, "Snare Roll", "midi.drum29");
 					adddrumkitnote(2, "Castanet", "midi.drum32");
 					adddrumkitnote(2, "Snare L", "midi.drum31");
@@ -504,7 +574,7 @@ package {
 					adddrumkitnote(2, "Wood Block L", "midi.drum77");
 					adddrumkitnote(2, "Cuica Mute", "midi.drum78");
 					adddrumkitnote(2, "Cuica Open", "midi.drum79");
-					adddrumkitnote(2, "Triangle Mute", "midi.drum82");
+					adddrumkitnote(2, "Triangle Mute", "midi.drum80");
 					adddrumkitnote(2, "Triangle Open", "midi.drum81");
 					adddrumkitnote(2, "Shaker", "midi.drum82");
 					adddrumkitnote(2, "Jingle Bells", "midi.drum83");
@@ -513,7 +583,7 @@ package {
 			}
 		}
 		
-		public function changekey(t:int):void {
+		public static function changekey(t:int):void {
 			var keyshift:int = t - key;
 			for (i = 0; i < musicbox[currentbox].numnotes; i++) {
 				musicbox[currentbox].notes[i].x += keyshift;
@@ -524,27 +594,29 @@ package {
 			updatepianoroll();
 		}
 		
-		public function changescale(t:int):void {
-			for (i = 0; i < musicbox[currentbox].numnotes; i++) {
-				musicbox[currentbox].notes[i].x = invertpianoroll[musicbox[currentbox].notes[i].x];
-			}
-			
+		public static function changescale(t:int):void {
 			setscale(t);
 			updatepianoroll();
+			
+			//Delete notes not in scale
 			for (i = 0; i < musicbox[currentbox].numnotes; i++) {
-				musicbox[currentbox].notes[i].x = pianoroll[musicbox[currentbox].notes[i].x];
+				if (invertpianoroll[musicbox[currentbox].notes[i].x] == -1) {
+					musicbox[currentbox].deletenote(i);
+					i--;
+				}
 			}
+			
 			musicbox[currentbox].scale = t;
 			if (musicbox[currentbox].bottomnote < 250) {
 				musicbox[currentbox].start = invertpianoroll[musicbox[currentbox].bottomnote] - 2;
 				if (musicbox[currentbox].start < 0) musicbox[currentbox].start = 0;
-			}else{
-			  musicbox[currentbox].start = scalesize * 3;
+			}else {
+			  musicbox[currentbox].start = (scalesize * 4) - 2;
 			}
 			musicbox[currentbox].setnotespan();
 		}
 		
-		public function changemusicbox(t:int):void {
+		public static function changemusicbox(t:int):void {
 			currentbox = t;
 			key = musicbox[t].key;
 			setscale(musicbox[t].scale);			
@@ -555,14 +627,16 @@ package {
 					musicbox[t].start = invertpianoroll[musicbox[t].bottomnote] - 2;
 					if (musicbox[t].start < 0) musicbox[t].start = 0;
 				}else{
-					musicbox[t].start = scalesize * 3;
+					musicbox[t].start = (scalesize * 4) - 2;
 				}
 			}else {
 				musicbox[t].start = 0;
 			}
+			
+			guiclass.changetab(currenttab);
 		}
 		
-		public function _setscale(t1:int = -1, t2:int = -1, t3:int = -1, t4:int = -1, t5:int = -1, t6:int = -1,
+		public static function _setscale(t1:int = -1, t2:int = -1, t3:int = -1, t4:int = -1, t5:int = -1, t6:int = -1,
 		                          t7:int = -1, t8:int = -1, t9:int = -1, t10:int = -1, t11:int = -1, t12:int = -1):void {
 		  if (t1 == -1) {
 				scalesize = 0;
@@ -611,7 +685,7 @@ package {
 			}
 		}
 		
-		public function setscale(t:int):void {
+		public static function setscale(t:int):void {
 			currentscale = t;
 			switch(t) {
 				case SCALE_MAJOR: _setscale(2, 2, 1, 2, 2, 2, 1); break;
@@ -640,7 +714,7 @@ package {
 			}
 		}
 		
-		public function updatepianoroll():void {
+		public static function updatepianoroll():void {
 			//Set piano roll based on currently loaded scale
 			var scaleiter:int = -1, pianorolliter:int = 0, lastnote:int = 0;
 			
@@ -657,6 +731,7 @@ package {
 			}
 			
 			for (i = 0; i < 104; i++) {
+				invertpianoroll[i] = -1;
 				for (j = 0; j < pianorollsize; j++) {
 					if (pianoroll[j] == i) {
 						invertpianoroll[i] = j;
@@ -665,14 +740,15 @@ package {
 			}
 		}
 		
-		public function addmusicbox():void {
+		public static function addmusicbox():void {
 			musicbox[numboxes].clear();
 			musicbox[numboxes].instr = currentinstrument;
 			musicbox[numboxes].palette = instrument[currentinstrument].palette;
+			musicbox[numboxes].hash += currentinstrument;
 			numboxes++;
 		}
 		
-		public function copymusicbox(a:int, b:int):void {
+		public static function copymusicbox(a:int, b:int):void {
 		  musicbox[a].numnotes = musicbox[b].numnotes;
 			
 		  for (j = 0; j < musicbox[a].numnotes; j++){
@@ -701,7 +777,7 @@ package {
 		  musicbox[a].isplayed = musicbox[b].isplayed;
 		}
 		
-		public function deletemusicbox(t:int):void {
+		public static function deletemusicbox(t:int):void {
 			if (currentbox == t) currentbox--;
 			for (i = t; i < numboxes; i++) {
 				copymusicbox(i, i + 1);
@@ -720,12 +796,12 @@ package {
 		}
 		
 		
-		public function seekposition(t:int):void {
+		public static function seekposition(t:int):void {
 			//Make this smoother someday maybe
 		  barposition = t;
 		}
 		
-		public function filllist(t:int):void {
+		public static function filllist(t:int):void {
 			list.type = t;
 			switch(t) {
 				case LIST_KEY:
@@ -756,7 +832,7 @@ package {
 					list.item[12] = "WORLD";
 					list.numitems = 13;
 				break;
-			  case LIST_INSTRUMENT:
+				case LIST_INSTRUMENT:
 				  if (voicelist.sublistsize > 15) {
 						//Need to split into several pages
 						//Fix pagenum if it got broken somewhere
@@ -782,6 +858,26 @@ package {
 						list.numitems = voicelist.sublistsize;
 					}
 				break;
+				case LIST_MIDIINSTRUMENT:
+					midilistselection = -1;
+					list.item[0] = "> Piano";
+					list.item[1] = "> Bells";
+					list.item[2] = "> Organ";
+					list.item[3] = "> Guitar";
+					list.item[4] = "> Bass";
+					list.item[5] = "> Strings";
+					list.item[6] = "> Ensemble";
+					list.item[7] = "> Brass";
+					list.item[8] = "> Reed";
+					list.item[9] = "> Pipe";
+					list.item[10] = "> Lead";
+					list.item[11] = "> Pads";
+					list.item[12] = "> Synth";
+					list.item[13] = "> World";
+					list.item[14] = "> Drums";
+					list.item[15] = "> Effects";
+					list.numitems = 16;
+				break;
 			  case LIST_SELECTINSTRUMENT:
 				  //For choosing from existing instruments
 					for (i = 0; i < numinstrument; i++ ) {
@@ -795,26 +891,36 @@ package {
 					list.item[2] = "8192 (slow, not recommended)";
 					list.numitems = 3;
 				break;
-			  case LIST_SCREENSIZE:
-				  i = 1;
-					var sw:int = flash.system.Capabilities.screenResolutionX;
-					var sh:int = flash.system.Capabilities.screenResolutionY;
-					while (384 * i < sw && 240 * i < sh) {
-					  list.item[i - 1] = "x" + String(i);
-						i++;
-					}
-					list.numitems = i - 1;
-				break;
 			  case LIST_EFFECTS:
 				  for (i = 0; i < 7; i++) {
 						list.item[i] = effectname[i];
 					}
 					list.numitems = 7;
 				break;
+				case LIST_MOREEXPORTS:
+					list.item[0] = "EXPORT .xm (wip)";
+					list.item[1] = "EXPORT .mml (wip)";
+					list.numitems = 2;
+				break;
+				case LIST_EXPORTS:
+					list.item[0] = "EXPORT .wav";
+					list.item[1] = "EXPORT .mid";
+					list.item[2] = "> More";
+					list.numitems = 3;
+				break;
+				default:
+					//Midi list
+					list.type = LIST_MIDIINSTRUMENT;
+					secondlist.type = t;
+					for (i = 0; i < 8; i++) {
+						secondlist.item[i] = voicelist.name[i + ((t - 10) * 8)];
+					}
+					secondlist.numitems = 8;
+				break;
 			}
 		}
 		
-		public function setinstrumenttoindex(t:int):void {
+		public static function setinstrumenttoindex(t:int):void {
 			voicelist.index = instrument[t].index;
 			if (help.Left(voicelist.voice[voicelist.index], 7) == "drumkit") {
 			  instrument[t].type = int(help.Right(voicelist.voice[voicelist.index]));
@@ -831,9 +937,22 @@ package {
 			instrument[t].palette = voicelist.palette[voicelist.index];
 		}
 		
-		public function changeinstrumentvoice(t:String):void {
+		public static function nextinstrument():void {
+			//Change to the next instrument in a category
+			voicelist.index = voicelist.getnext(voicelist.getvoice(instrument[currentinstrument].name));
+			changeinstrumentvoice(voicelist.name[voicelist.index]);
+		}
+		
+		public static function previousinstrument():void {
+			//Change to the previous instrument in a category
+			voicelist.index = voicelist.getprevious(voicelist.getvoice(instrument[currentinstrument].name));
+			changeinstrumentvoice(voicelist.name[voicelist.index]);
+		}
+		
+		public static function changeinstrumentvoice(t:String):void {
 			instrument[currentinstrument].name = t;
 			voicelist.index = voicelist.getvoice(t);
+			instrument[currentinstrument].category = voicelist.category[voicelist.index];
 			if (help.Left(voicelist.voice[voicelist.index], 7) == "drumkit") {
 			  instrument[currentinstrument].type = int(help.Right(voicelist.voice[voicelist.index]));
 				instrument[currentinstrument].updatefilter();
@@ -860,7 +979,7 @@ package {
 			}
 		}
 		
-		public function makefilestring():void {
+		public static function makefilestring():void {
 			filestring = "";
 			filestring += String(version) + ",";
 			filestring += String(swing)+",";
@@ -913,7 +1032,8 @@ package {
 			}
 		}
 		
-		public function newsong():void {
+		public static function newsong():void {
+			changetab(MENUTAB_FILE);
 			bpm = 120; boxcount = 16; barcount = 4; doublesize = false;
 			effectvalue = 0; effecttype = 0; updateeffects();
 			_driver.bpm = bpm;
@@ -925,15 +1045,19 @@ package {
 			numinstrument = 1;
 			instrumentmanagerview = 0;
 			patternmanagerview = 0;
+			// set instrument to grand piano
+			instrument[0] = new instrumentclass();
+			instrument[0].voice = _presets["midi.piano1"];
+			instrument[0].updatefilter();
 			showmessage("NEW SONG CREATED");
 		}
 		
-		public function readfilestream():int {
+		public static function readfilestream():int {
 			fi++;
 			return filestream[fi-1];
 		}
 		
-		public function convertfilestring():void {
+		public static function convertfilestring():void {
 			fi = 0;
 			version = readfilestream();
 			if (version == 3) {
@@ -948,8 +1072,8 @@ package {
 					instrument[i].index = readfilestream();
 					setinstrumenttoindex(i);
 					instrument[i].type = readfilestream();
-					instrument[i].palette= readfilestream();
-					instrument[i].cutoff= readfilestream();
+					instrument[i].palette = readfilestream();
+					instrument[i].cutoff = readfilestream();
 					instrument[i].resonance = readfilestream();
 					instrument[i].volume = readfilestream();
 					instrument[i].updatefilter();
@@ -999,7 +1123,7 @@ package {
 			}
 		}
 		
-		public function legacy_convertfilestring(t:int):void {
+		public static function legacy_convertfilestring(t:int):void {
 			switch(t) {
 				case 2: //Before effects and 32 note patterns
 					swing = readfilestream();
@@ -1113,18 +1237,22 @@ package {
 			}
 		}
 		
-		public function fileHasExtension(file:File, extension:String):Boolean {     
+		// File stuff
+
+		CONFIG::desktop {
+
+		public static function fileHasExtension(file:File, extension:String):Boolean {     
 			if (!file.extension || file.extension.toLowerCase() != extension) {         
 				return false;     
 			}                 
 			return true; 
 		}
 		
-		public function addExtensionToFile(file:File, extension:String):void {     
+		public static function addExtensionToFile(file:File, extension:String):void {     
 			file.url += "." + extension; 
 		}
 		
-		public function saveceol():void {
+		public static function saveceol():void {
 			file = File.desktopDirectory.resolvePath("*.ceol");
       file.addEventListener(Event.SELECT, onsaveceol);
 			file.browseForSave("Save .ceol File");
@@ -1132,7 +1260,7 @@ package {
 			fixmouseclicks = true;
 		}
 		
-		private function onsaveceol(e:Event):void {    
+		private static function onsaveceol(e:Event):void {    
 			file = e.currentTarget as File;
 			
 			if (!fileHasExtension(file, "ceol")) {
@@ -1150,7 +1278,7 @@ package {
 			showmessage("SONG SAVED");
 		}
 		
-		public function loadceol():void {
+		public static function loadceol():void {
 			file = File.desktopDirectory.resolvePath("");
       file.addEventListener(Event.SELECT, onloadceol);
 			file.browseForOpen("Load .ceol File", [ceolFilter]);
@@ -1158,7 +1286,7 @@ package {
 			fixmouseclicks = true;
 		}
 		
-		public function invokeceol(t:String):void { 
+		public static function invokeceol(t:String):void { 
 			file = new File();
 			file.nativePath = t;
 			
@@ -1167,24 +1295,14 @@ package {
 			filestring = stream.readUTFBytes(stream.bytesAvailable);
 			stream.close();
 			
-			filestream = new Array();
-			filestream = filestring.split(",");
-			
-			numinstrument = 1;
-			numboxes = 0;
-			arrange.clear();
-			arrange.currentbar = 0; arrange.viewstart = 0;
-			
-			convertfilestring();
-			
-			changemusicbox(0);
-			looptime = 0;
-			
+			loadfilestring(filestring);
+			_driver.play(null, false);
+
 			fixmouseclicks = true;
 			showmessage("SONG LOADED");
 		}
 		
-		private function onloadceol(e:Event):void {  
+		private static function onloadceol(e:Event):void {  
 			file = e.currentTarget as File;
 			
 			stream = new FileStream();
@@ -1192,9 +1310,114 @@ package {
 			filestring = stream.readUTFBytes(stream.bytesAvailable);
 			stream.close();
 			
-			filestream = new Array();
-			filestream = filestring.split(",");
+			loadfilestring(filestring);
+			_driver.play(null, false);
 			
+			fixmouseclicks = true;
+			showmessage("SONG LOADED");
+		}
+
+		public static function exportxm():void {
+			stopmusic();
+			
+			file = File.desktopDirectory.resolvePath("*.xm");
+			file.addEventListener(Event.SELECT, onexportxm);
+			file.browseForSave("Export .XM module file");
+			
+			fixmouseclicks = true;
+		}
+
+		private static function onexportxm(e:Event):void {
+			file = e.currentTarget as File;
+
+			if (!fileHasExtension(file, "xm")) {
+				addExtensionToFile(file, "xm");
+			}
+
+			var xm:TrackerModuleXM = new TrackerModuleXM();
+			xm.loadFromLiveBoscaCeoilModel(file.name);
+
+			stream = new FileStream();
+			stream.open(file, FileMode.WRITE);
+			xm.writeToStream(stream);
+			stream.close();
+
+			fixmouseclicks = true;
+			showmessage("SONG EXPORTED AS XM");
+		}
+
+		public static function exportmml():void {
+			stopmusic();
+
+			file = File.desktopDirectory.resolvePath("*.mml");
+			file.addEventListener(Event.SELECT, onexportmml);
+			file.browseForSave("Export MML music text file");
+
+			fixmouseclicks = true;
+		}
+
+		private static function onexportmml(e:Event):void {
+			file = e.currentTarget as File;
+
+			if (!fileHasExtension(file, "mml")) {
+				addExtensionToFile(file, "mml");
+			}
+
+			var song:MMLSong = new MMLSong();
+			song.loadFromLiveBoscaCeoilModel();
+
+			stream = new FileStream();
+			stream.open(file, FileMode.WRITE);
+			song.writeToStream(stream);
+			stream.close();
+
+			fixmouseclicks = true;
+			showmessage("SONG EXPORTED AS MML");
+		}
+
+
+		private static function onsavewav(e:Event):void {
+			file = e.currentTarget as File;
+
+			if (!fileHasExtension(file, "wav")) {
+				addExtensionToFile(file, "wav");
+			}
+
+			stream = new FileStream();
+			stream.open(file, FileMode.WRITE);
+			stream.writeBytes(_wav, 0, _wav.length);
+			stream.close();
+
+			fixmouseclicks = true;
+			showmessage("SONG EXPORTED AS WAV");
+		}
+
+		}
+
+		CONFIG::web {
+			public static function invokeCeolWeb(ceolStr:String):void {
+				changetab(MENUTAB_FILE);
+				if (ceolStr != "") {
+					filestring = ceolStr;
+					loadfilestring(filestring);
+					showmessage("SONG LOADED");
+				} else {
+					newsong();
+				}
+
+				_driver.play(null, false);
+			}
+
+			public static function getCeolString():String {
+				makefilestring();
+				return filestring;
+			}
+		}
+
+		private static function loadfilestring(s:String):void {
+			filestream = new Array();
+			filestream = s.split(",");
+
 			numinstrument = 1;
 			numboxes = 0;
 			arrange.clear();
@@ -1204,17 +1427,14 @@ package {
 			
 			changemusicbox(0);
 			looptime = 0;
-			
-			fixmouseclicks = true;
-			showmessage("SONG LOADED");
 		}
 		
-		public function showmessage(t:String):void {
+		public static function showmessage(t:String):void {
 			message = t;
 			messagedelay = 90;
 		}
 		
-		public function onStream(e : SiONEvent) : void{
+		public static function onStream(e : SiONEvent) : void{
 			e.streamBuffer.position = 0;
 			while(e.streamBuffer.bytesAvailable > 0){
 				var d : int = e.streamBuffer.readFloat() * 32767;
@@ -1222,8 +1442,30 @@ package {
 			}
 		}
 		
-		public function exportwav():void {
-			currenttab = 1; clicklist = true;
+		public static function pausemusic():void {
+			if (musicplaying) {
+				musicplaying = !musicplaying;
+				if (!musicplaying) notecut();
+			}
+		}
+		
+		public static function stopmusic():void {
+			if (musicplaying) {
+				musicplaying = !musicplaying;
+				looptime = 0;
+				arrange.currentbar = arrange.loopstart;
+				if (!musicplaying) notecut();
+			}
+		}
+		
+		public static function startmusic():void {
+			if (!musicplaying) {
+				musicplaying = !musicplaying;
+			}
+		}
+		
+		public static function exportwav():void {
+			changetab(MENUTAB_ARRANGEMENTS); clicklist = true;
 			arrange.loopstart = 0; arrange.loopend = arrange.lastbar;
 			musicplaying = true;
 			looptime = 0;	arrange.currentbar = arrange.loopstart;
@@ -1237,7 +1479,7 @@ package {
 			nowexporting = true;
 		}
 		
-		public function savewav():void {
+		public static function savewav():void {
 			nowexporting = false; followmode = false;
 			
 			_wav = new ByteArray();
@@ -1259,127 +1501,144 @@ package {
 			_data.position = 0;
 			_wav.writeBytes(_data);
 			
-			file = File.desktopDirectory.resolvePath("*.wav");
-      file.addEventListener(Event.SELECT, onsavewav);
-			file.browseForSave("Export .wav File");
-			
-			fixmouseclicks = true;
-		}
-		
-		private function onsavewav(e:Event):void {    
-			file = e.currentTarget as File;
-			
-			if (!fileHasExtension(file, "wav")) {
-				addExtensionToFile(file, "wav");
+			CONFIG::desktop {
+				file = File.desktopDirectory.resolvePath("*.wav");
+				file.addEventListener(Event.SELECT, onsavewav);
+				file.browseForSave("Export .wav File");
 			}
 			
-			stream = new FileStream();
-			stream.open(file, FileMode.WRITE);
-			stream.writeBytes(_wav, 0, _wav.length);
-			stream.close();
+			CONFIG::web {
+				var b64:Base64Encoder = new Base64Encoder();
+				_wav.position = 0;
+				b64.encodeBytes(_wav);
+				ExternalInterface.call('Bosca._wavRecorded', b64.toString());
+			}
 			
 			fixmouseclicks = true;
-			showmessage("SONG EXPORTED AS WAV");
 		}
 		
-		public var file:File, stream:FileStream;
-		public var filestring:String, fi:int;
-		public var filestream:Array;
-		public var ceolFilter:FileFilter = new FileFilter("Ceol", "*.ceol");
+		public static function changetab(newtab:int):void {
+			currenttab = newtab;
+			guiclass.changetab(newtab);
+		}
 		
-		public var i:int, j:int, k:int;
+		public static function changetab_ifdifferent(newtab:int):void {
+			if(currenttab!=newtab){
+				currenttab = newtab;
+				guiclass.changetab(newtab);
+			}
+		}
 		
-		public var fullscreen:Boolean;
+		CONFIG::desktop {
+			public static var file:File, stream:FileStream;
+		}
+		public static var filestring:String, fi:int;
+		public static var filestream:Array;
+		public static var ceolFilter:FileFilter = new FileFilter("Ceol", "*.ceol");
 		
-		public var fullscreentoggleheld:Boolean = false;
+		public static var i:int, j:int, k:int;
 		
-		public var press_up:Boolean, press_down:Boolean, press_left:Boolean, press_right:Boolean, press_space:Boolean, press_enter:Boolean;
-		public var keypriority:int = 0;
-		public var keyheld:Boolean = false;;
-		public var clicklist:Boolean;
-		public var copykeyheld:Boolean = false;
+		public static var fullscreen:Boolean;
 		
-		public var keydelay:int, keyboardpressed:int = 0;
-		public var fixmouseclicks:Boolean = false;
+		public static var fullscreentoggleheld:Boolean = false;
 		
-		public var mx:int, my:int;
-		public var test:Boolean, teststring:String;
+		public static var press_up:Boolean, press_down:Boolean, press_left:Boolean, press_right:Boolean, press_space:Boolean, press_enter:Boolean;
+		public static var keypriority:int = 0;
+		public static var keyheld:Boolean = false;;
+		public static var clicklist:Boolean;
+		public static var clicksecondlist:Boolean;
+		public static var copykeyheld:Boolean = false;
 		
-		public var _driver:SiONDriver;
-		public var _presets:SiONPresetVoice;
-		public var voicelist:voicelistclass;
+		public static var keydelay:int, keyboardpressed:int = 0;
+		public static var fixmouseclicks:Boolean = false;
 		
-		public var instrument:Vector.<instrumentclass> = new Vector.<instrumentclass>;
-		public var numinstrument:int;
-		public var instrumentmanagerview:int;
+		public static var mx:int, my:int;
+		public static var test:Boolean, teststring:String;
 		
-		public var musicbox:Vector.<musicphraseclass> = new Vector.<musicphraseclass>;
-		public var numboxes:int;
-		public var looptime:int;
-		public var currentbox:int;
-		public var currentnote:int;
-		public var currentinstrument:int;
-		public var boxsize:int, boxcount:int;
-		public var barsize:int, barcount:int;
-		public var notelength:int;
-		public var doublesize:Boolean;
+		public static var _driver:SiONDriver;
+		public static var _presets:SiONPresetVoice;
+		public static var voicelist:voicelistclass;
 		
-		public var barposition:Number = 0;
-		public var drawnoteposition:int, drawnotelength:int;
+		public static var instrument:Vector.<instrumentclass> = new Vector.<instrumentclass>;
+		public static var numinstrument:int;
+		public static var instrumentmanagerview:int;
 		
-		public var cursorx:int, cursory:int;
-		public var arrangecurx:int, arrangecury:int;
-		public var patterncury:int, timelinecurx:int;
-		public var instrumentcury:int;
-		public var notey:int;
+		public static var musicbox:Vector.<musicphraseclass> = new Vector.<musicphraseclass>;
+		public static var numboxes:int;
+		public static var looptime:int;
+		public static var currentbox:int;
+		public static var currentnote:int;
+		public static var currentinstrument:int;
+		public static var boxsize:int, boxcount:int;
+		public static var barsize:int, barcount:int;
+		public static var notelength:int;
+		public static var doublesize:Boolean;
+		public static var arrangescrolldelay:int = 0;
 		
-		public var notename:Vector.<String> = new Vector.<String>;
-		public var scalename:Vector.<String> = new Vector.<String>;
+		public static var barposition:Number = 0;
+		public static var drawnoteposition:int, drawnotelength:int;
 		
-		public var currentscale:int = 0;
-		public var scale:Vector.<int> = new Vector.<int>;
-		public var key:int;
-		public var scalesize:int;
+		public static var cursorx:int, cursory:int;
+		public static var arrangecurx:int, arrangecury:int;
+		public static var patterncury:int, timelinecurx:int;
+		public static var instrumentcury:int;
+		public static var notey:int;
 		
-		public var pianoroll:Vector.<int> = new Vector.<int>;
-		public var invertpianoroll:Vector.<int> = new Vector.<int>;
-		public var pianorollsize:int;
+		public static var notename:Vector.<String> = new Vector.<String>;
+		public static var scalename:Vector.<String> = new Vector.<String>;
 		
-		public var arrange:arrangementclass = new arrangementclass();
-		public var drumkit:Vector.<drumkitclass> = new Vector.<drumkitclass>;
+		public static var currentscale:int = 0;
+		public static var scale:Vector.<int> = new Vector.<int>;
+		public static var key:int;
+		public static var scalesize:int;
 		
-		public var currenttab:int;
+		public static var pianoroll:Vector.<int> = new Vector.<int>;
+		public static var invertpianoroll:Vector.<int> = new Vector.<int>;
+		public static var pianorollsize:int;
 		
-		public var dragaction:int, dragx:int, dragy:int, dragpattern:int;
-		public var patternmanagerview:int;
+		public static var arrange:arrangementclass = new arrangementclass();
+		public static var drumkit:Vector.<drumkitclass> = new Vector.<drumkitclass>;
 		
-		public var trashbutton:int;
+		public static var currenttab:int;
 		
-		public var list:listclass = new listclass;
+		public static var dragaction:int, dragx:int, dragy:int, dragpattern:int;
+		public static var patternmanagerview:int;
 		
-		public var musicplaying:Boolean = true;
-		public var nowexporting:Boolean = false;
-		public var followmode:Boolean = false;
-		public var bpm:int;
-		public var version:int;
-		public var swing:int;
-		public var swingoff:int;
+		public static var trashbutton:int;
 		
-		public var doubleclickcheck:int;
+		public static var list:listclass = new listclass;
+		public static var secondlist:listclass = new listclass;
+		public static var midilistselection:int;
 		
-		public var programsettings:SharedObject;
-		public var buffersize:int, currentbuffersize:int;
+		public static var musicplaying:Boolean = true;
+		public static var nowexporting:Boolean = false;
+		public static var followmode:Boolean = false;
+		public static var bpm:int;
+		public static var version:int;
+		public static var swing:int;
+		public static var swingoff:int;
 		
-		private var _data:ByteArray;
-		private var _wav:ByteArray;
+		public static var doubleclickcheck:int;
 		
-		public var message:String;
-		public var messagedelay:int = 0;
-		public var startup:int = 0, invokefile:String = "null";
+		public static var programsettings:SharedObject;
+		public static var buffersize:int, currentbuffersize:int;
+		
+		private static var _data:ByteArray;
+		private static var _wav:ByteArray;
+		
+		public static var message:String;
+		public static var messagedelay:int = 0;
+		public static var startup:int = 0, invokefile:String = "null";
+		public static var ctrl:String;
 		
 		//Global effects
-		public var effecttype:int;
-		public var effectvalue:int;
-		public var effectname:Vector.<String> = new Vector.<String>;
+		public static var effecttype:int;
+		public static var effectvalue:int;
+		public static var effectname:Vector.<String> = new Vector.<String>;
+		
+		public static var versionnumber:String;
+		public static var savescreencountdown:int;
+		public static var minresizecountdown:int;
+		public static var forceresize:Boolean = false;
 	}
 }
