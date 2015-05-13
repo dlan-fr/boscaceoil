@@ -1,4 +1,4 @@
-﻿package {
+package {
 	import flash.display.*;
 	import flash.geom.*;
   import flash.events.*;
@@ -297,6 +297,8 @@
 													drumkit[instrument[musicbox[i].instr].type-1].updatefilter(musicbox[i].cutoffgraph[looptime % boxcount], musicbox[i].resonancegraph[looptime % boxcount]);
 												  drumkit[instrument[musicbox[i].instr].type-1].updatevolume(musicbox[i].volumegraph[looptime % boxcount]);
 												}
+
+
 												_driver.noteOn(drumkit[instrument[musicbox[i].instr].type-1].voicenote[int(musicbox[i].notes[j].x)], drumkit[instrument[musicbox[i].instr].type-1].voicelist[int(musicbox[i].notes[j].x)], int(musicbox[i].notes[j].y));
 											}
 										}	

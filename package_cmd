@@ -3,5 +3,5 @@
 ./adt -certificate -cn SelfSigned 1024-RSA sampleCert.pfx <password>
 
 --deb package creation
-/opt/AdobeAirSDK/bin/adt -package -storetype pkcs12 -keystore /opt/AdobeAirSDK/bin/sampleCert.pfx -target native BoscaCeoil.deb application-linux.xml BoscaCeoil.swf assets
+/opt/AdobeAirSDK/bin/adt -package -storetype pkcs12 -keystore /opt/AdobeAirSDK/bin/sampleCert.pfx -target native BoscaCeoil.deb application-linux.xml BoscaCeoil.swf assets fix_sound_latency.sh readme.txt changelog.txt
 
