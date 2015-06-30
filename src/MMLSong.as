@@ -19,7 +19,7 @@ package {
 			bpm = control.bpm;
 			lengthOfPattern = control.boxcount;
 
-			var emptyBarMML:String = "\n// empty bar\n" + StringUtil.repeat("  r   ", lengthOfPattern) + "\n";
+			var emptyBarMML:String = "\n// empty bar\n" + BoscaStringUtil.repeat("  r   ", lengthOfPattern) + "\n";
 			var bar:uint;
 			var patternNum:int;
 			var numberOfPatterns:int = control.numboxes;
@@ -135,7 +135,7 @@ package {
 					notesInThisSlot.push(mmlOctave + mmlNoteName + mmlSlur);
 				}
 				while (notesInThisSlot.length > tracks.length) {
-					var emptyTrackSoFar:String = StringUtil.repeat(emptyNoteMML, place);
+					var emptyTrackSoFar:String = BoscaStringUtil.repeat(emptyNoteMML, place);
 					tracks.push(mmlToUseInstrument[pattern.instr] + "\n" + emptyTrackSoFar);
 				}
 				var emptyNoteMML:String = "  r   ";

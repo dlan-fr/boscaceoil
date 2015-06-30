@@ -11,7 +11,10 @@ package {
 		}
 		
 		public function init(x:int, y:int, w:int, h:int, contents:String, act:String = "", sty:String = "normal"):void {
-			position.setTo(x, y, w, h);
+			position.x = x;
+               position.y = y;
+               position.width = w;
+               position.height = h;
 			text = contents;
 		  action = act;
 			style = sty;

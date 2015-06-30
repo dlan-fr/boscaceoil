@@ -1,5 +1,4 @@
 // temporary: ignore the entire contents of this file when building for web
-CONFIG::desktop {
 package {
 	import flash.display.*;
 	import flash.geom.*;
@@ -740,9 +739,7 @@ package {
 			return control.voicelist.midimap[t];
 		}
 		
-		CONFIG::desktop {
-			public static var file:File, stream:FileStream;
-		}
+		public static var file:File, stream:FileStream;
 		
 		public static var mididata:ByteArray;
 		public static var resolution:Number;
@@ -762,5 +759,4 @@ package {
 		public static var tempbytes:ByteArray;
 		public static var midiexporter:Midiexporter;
 	}
-}
 }

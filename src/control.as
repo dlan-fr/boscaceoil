@@ -14,10 +14,6 @@ package {
 	import flash.filesystem.*;
   import flash.net.FileFilter;
   import flash.system.Capabilities;
-	CONFIG::web {
-		import flash.external.ExternalInterface;
-		import mx.utils.Base64Encoder;
-	}
 		
 	public class control extends Sprite{
 		public static var SCALE_NORMAL:int = 0;
@@ -232,11 +228,9 @@ package {
 			_driver.play(null, false);
 			
 			startup = 1;
-			CONFIG::desktop {
-				if (invokefile != "null") {
-					invokeceol(invokefile);
-					invokefile = "null";
-				}
+			if (invokefile != "null") {
+				invokeceol(invokefile);
+				invokefile = "null";
 			}
 		}
 		
@@ -1239,7 +1233,6 @@ package {
 		
 		// File stuff
 
-		CONFIG::desktop {
 
 		public static function fileHasExtension(file:File, extension:String):Boolean {     
 			if (!file.extension || file.extension.toLowerCase() != extension) {         
@@ -1392,27 +1385,6 @@ package {
 			showmessage("SONG EXPORTED AS WAV");
 		}
 
-		}
-
-		CONFIG::web {
-			public static function invokeCeolWeb(ceolStr:String):void {
-				changetab(MENUTAB_FILE);
-				if (ceolStr != "") {
-					filestring = ceolStr;
-					loadfilestring(filestring);
-					showmessage("SONG LOADED");
-				} else {
-					newsong();
-				}
-
-				_driver.play(null, false);
-			}
-
-			public static function getCeolString():String {
-				makefilestring();
-				return filestring;
-			}
-		}
 
 		private static function loadfilestring(s:String):void {
 			filestream = new Array();
@@ -1501,18 +1473,10 @@ package {
 			_data.position = 0;
 			_wav.writeBytes(_data);
 			
-			CONFIG::desktop {
-				file = File.desktopDirectory.resolvePath("*.wav");
-				file.addEventListener(Event.SELECT, onsavewav);
-				file.browseForSave("Export .wav File");
-			}
+			file = File.desktopDirectory.resolvePath("*.wav");
+			file.addEventListener(Event.SELECT, onsavewav);
+			file.browseForSave("Export .wav File");
 			
-			CONFIG::web {
-				var b64:Base64Encoder = new Base64Encoder();
-				_wav.position = 0;
-				b64.encodeBytes(_wav);
-				ExternalInterface.call('Bosca._wavRecorded', b64.toString());
-			}
 			
 			fixmouseclicks = true;
 		}
@@ -1529,9 +1493,9 @@ package {
 			}
 		}
 		
-		CONFIG::desktop {
-			public static var file:File, stream:FileStream;
-		}
+
+		public static var file:File, stream:FileStream;
+		
 		public static var filestring:String, fi:int;
 		public static var filestream:Array;
 		public static var ceolFilter:FileFilter = new FileFilter("Ceol", "*.ceol");

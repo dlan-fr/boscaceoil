@@ -1287,12 +1287,10 @@ package {
 					addbutton(20 + tx, (gfx.linespacing * 9)-6, 120, "CREDITS", "creditstab");
 					addbutton(154 + tx, (gfx.linespacing * 9)-6, 120, "HELP", "helptab");
 					
-					CONFIG::desktop {
-						addbutton(gfx.screenwidth - 340 - tx, gfx.linespacing * 2, 150, "NEW SONG", "newsong");
-						addbutton(gfx.screenwidth - 170 - tx, gfx.linespacing * 2, 150, "EXPORT...", "exportlist");
-						addbutton(gfx.screenwidth - 340 - tx, (gfx.linespacing * 4) + 10, 150, "LOAD .ceol", "loadceol");
-						addbutton(gfx.screenwidth - 170 - tx, (gfx.linespacing * 4) + 10, 150, "SAVE .ceol", "saveceol");
-					}
+					addbutton(gfx.screenwidth - 340 - tx, gfx.linespacing * 2, 150, "NEW SONG", "newsong");
+					addbutton(gfx.screenwidth - 170 - tx, gfx.linespacing * 2, 150, "EXPORT...", "exportlist");
+					addbutton(gfx.screenwidth - 340 - tx, (gfx.linespacing * 4) + 10, 150, "LOAD .ceol", "loadceol");
+					addbutton(gfx.screenwidth - 170 - tx, (gfx.linespacing * 4) + 10, 150, "SAVE .ceol", "saveceol");
 					
 					addcontrol(gfx.screenwidth - 340 - tx, (gfx.linespacing * 7) - 2, "changepatternlength");
 					addcontrol(gfx.screenwidth - 340 - tx, (gfx.linespacing * 9) - 2, "changebpm");
@@ -1355,9 +1353,8 @@ package {
 					}else {
 						addbutton(gfx.screenwidth - 340 - tx, gfx.linespacing * 7, 150, "SCALE DOWN", "changescale");
 					}
-					CONFIG::desktop {
-						addbutton(gfx.screenwidth - 170 - tx, gfx.linespacing * 7, 150, "IMPORT .mid", "loadmidi");
-					}
+					
+					addbutton(gfx.screenwidth - 170 - tx, gfx.linespacing * 7, 150, "IMPORT .mid", "loadmidi");
 				break;
 			}
 			
@@ -1445,23 +1442,14 @@ package {
 					control.stopmusic();
 				}
 			}else if (currentbutton == "exportlist") {
-				CONFIG::desktop {
 					tx = (gfx.screenwidth - 768) / 4;
 					control.filllist(control.LIST_EXPORTS);
 					control.list.init(gfx.screenwidth - 170 - tx, (gfx.linespacing * 4) - 14);
-				}
 				
-				CONFIG::web {
-				  control.exportwav();
-				}
 			}else if (currentbutton == "loadceol") {
-				CONFIG::desktop {
 					control.loadceol();
-				}
 			}else if (currentbutton == "saveceol") {
-				CONFIG::desktop {
 				  control.saveceol();
-				}
 			}else if (currentbutton == "filetab") {
 				control.changetab(control.MENUTAB_FILE);
 			}else if (currentbutton == "arrangementstab") {
@@ -1549,9 +1537,7 @@ package {
 				control.previousinstrument();
 			}else if (currentbutton == "loadmidi") {
 			  button[i].press();
-				CONFIG::desktop {
 					midicontrol.openfile();
-				}
 			}else if (currentbutton == "changescale") {
 			  button[i].press();
 				gfx.changescalemode(1 - gfx.scalemode);

@@ -1,13 +1,11 @@
-﻿package{
+package{
 	import flash.display.*;
 	import flash.geom.*;
   import flash.events.*;
   import flash.net.*;
 	import flash.text.*;
 	import flash.utils.Dictionary;
-	CONFIG::desktop {
-		import flash.display.NativeWindow;
-	}
+	import flash.display.NativeWindow;
 	
 	public class gfx extends Sprite {
 		public static function init(_stage:Stage):void {
@@ -29,12 +27,7 @@
 		}
 		
 		
-		CONFIG::web {
-		public static function changescalemode(t:int):void {
-		}
-		}
 		
-		CONFIG::desktop {
 		public static function changescalemode(t:int):void {
 			//Set new minimum screensize
 			if (t == 0) {
@@ -50,7 +43,6 @@
 			scalemode = t;
 			control.forceresize = true;
 			control.clicklist = true; // Stops from placing a note on resize
-		}
 		}
 		
 		public static function tutorialimagewidth(t:int):int {
@@ -792,7 +784,6 @@
 			patternwidth = 44 + (zoom * 16);
 		}
 		
-		CONFIG::desktop {
 			public static function changewindowsize(w:int, h:int):void {
 				//if (w < 768) w = 768;
 				//if (h < 480) h = 480;
@@ -818,13 +809,7 @@
 				screenwidthmid = screenwidth / 2; screenheightmid = screenheight / 2;
 				screenviewwidth = screenwidth; screenviewheight = screenheight;		
 			}
-		}
 
-		CONFIG::web {
-			public static function changewindowsize(w:int, h:int):void {
-				// no-op
-			}
-		}
 
 		public static function settrect(x:int, y:int, w:int, h:int):void {
 			trect.x = x;

@@ -1,4 +1,4 @@
-﻿public function render(key:KeyPoll):void {
+public function render(key:KeyPoll):void {
 	var i:int, j:int, k:int;
 	
 	if (gfx.updatebackground > 0) {
@@ -7,12 +7,8 @@
 		gfx.fillrect(0, 0, gfx.screenwidth, gfx.screenheight, 1);
 		
 		//Tabs
-		CONFIG::desktop {
-			j = (gfx.screenwidth - 40) / 4;
-		}
-		CONFIG::web {
-			j = (gfx.screenwidth) / 4;
-		}
+		j = (gfx.screenwidth - 40) / 4;
+			
 		if (control.currenttab == control.MENUTAB_HELP) {
 			gfx.fillrect(0, 0, j, gfx.linesize, 5);
 			gfx.print(14, 0, "HELP", control.currenttab == control.MENUTAB_HELP?0:2, false, true);
@@ -26,10 +22,9 @@
 		gfx.print(j + 14, 0, "ARRANGEMENT", control.currenttab==control.MENUTAB_ARRANGEMENTS?0:2, false, true);
 		gfx.print((j * 2) + 14, 0, "INSTRUMENT", control.currenttab == control.MENUTAB_INSTRUMENTS?0:2, false, true);
 		gfx.print((j * 3) + 14, 0, "ADVANCED", control.currenttab == control.MENUTAB_ADVANCED?0:2, false, true);
-		CONFIG::desktop {
-			gfx.fillrect((j * 4), 0, 42, 20, 3);
-			gfx.drawicon((j * 4) + 12, 1, control.fullscreen?5:4);
-		}
+		
+		gfx.fillrect((j * 4), 0, 42, 20, 3);
+		gfx.drawicon((j * 4) + 12, 1, control.fullscreen?5:4);
 		
 		if (control.nowexporting) {
 			gfx.updatebackground = 5;
