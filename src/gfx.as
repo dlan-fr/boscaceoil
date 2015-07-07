@@ -784,22 +784,26 @@ package{
 			patternwidth = 44 + (zoom * 16);
 		}
 		
-			public static function changewindowsize(w:int, h:int):void {
+			public static function changewindowsize(w:int, h:int,updatenative:Boolean=false):void {
 				//if (w < 768) w = 768;
 				//if (h < 480) h = 480;
-				windowboundsx = stage.nativeWindow.bounds.width - stage.stageWidth;
-				windowboundsy = stage.nativeWindow.bounds.height - stage.stageHeight;
 				windowwidth = w;
 				windowheight = h;
-				if (control.fullscreen) {
+ 
+                    if(updatenative)
+                    {
+                         //windowboundsx = stage.nativeWindow.bounds.width - stage.stageWidth;
+	                    //windowboundsy = stage.nativeWindow.bounds.height - stage.stageHeight;
+                         if (control.fullscreen) {
 					
-				}else{
-					if (stage && stage.nativeWindow) {
-						stage.nativeWindow.width = w + windowboundsx;
-						stage.nativeWindow.height = h + windowboundsy;
-					}
-				}
-				
+				     }else{
+					     if (stage && stage.nativeWindow) {
+						     stage.nativeWindow.width = w + windowboundsx;
+						     stage.nativeWindow.height = h + windowboundsy;
+					     }
+				     }
+                     }
+               
 				if (gfx.scalemode == 1) {
 					screenwidth = w/1.5; screenheight = h/1.5;	
 				}else {

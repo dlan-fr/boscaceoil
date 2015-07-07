@@ -3,11 +3,11 @@
 	
 	<id>BoscaCeoil</id> 
 	<versionNumber>2.0</versionNumber> 
-	<filename>BoscaCeoil</filename> 
+	<filename>Boscaceoil</filename> 
 	
 	<name>Bosca Ceoil</name> 
-	<description></description> 
-	<copyright></copyright> 
+	<description>A simple music making program. require adobe air to work: http://airdownload.adobe.com/air/lin/download/2.6/AdobeAIRInstaller.bin</description> 
+	<copyright>Copyright 1992-2013 Terry Cavanagh. All rights reserved.</copyright> 
 	
 	<icon> 
     <image16x16>assets/bc_16.png</image16x16> 
@@ -18,7 +18,7 @@
 	
 	<initialWindow> 
 		<title>Bosca Ceoil</title> 
-		<content>BoscaCeoil.swf</content> 
+		<content>Boscalinux.swf</content> 
 		<systemChrome>standard</systemChrome> 
 		<transparent>false</transparent> 
 		<visible>true</visible> 

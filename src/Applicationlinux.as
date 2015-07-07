@@ -48,7 +48,7 @@ package{
 	import flash.utils.getTimer;
 	import flash.utils.Timer;
 	import flash.events.InvokeEvent;
-	
+	import flash.filesystem.*;
 	import flash.desktop.NativeApplication;
 
 	public class Applicationlinux extends Sprite{
@@ -69,10 +69,14 @@ package{
 			control.init();
 			
 			//Working towards resolution independence!
-			gfx.init(stage);
-			
-			stage.addEventListener(Event.RESIZE, handleResize);
-			
+               gfx.windowboundsx = stage.nativeWindow.bounds.width - stage.stageWidth;
+	          gfx.windowboundsy = stage.nativeWindow.bounds.height - stage.stageHeight;
+
+			stage.nativeWindow.addEventListener(NativeWindowBoundsEvent.RESIZING,handleResize);
+               stage.nativeWindow.addEventListener(NativeWindowDisplayStateEvent.DISPLAY_STATE_CHANGE,handleFullscreen);
+
+			gfx.init(stage);	
+		
 			var tempbmp:Bitmap;
 			tempbmp = new im_icons();	gfx.buffer = tempbmp.bitmapData;	gfx.makeiconarray();
 			tempbmp = new im_logo0();	gfx.buffer = tempbmp.bitmapData;	gfx.addimage();
@@ -108,29 +112,70 @@ package{
 			}
 			
 			_startMainLoop();
+              
 		}
+		
+
+          private function winresize(evt:NativeWindowBoundsEvent):void
+          {
+               evt.preventDefault();
+               var file : File = File.desktopDirectory.resolvePath("/home/user/Projects/Output.log");
+		    var fileMode : String = FileMode.APPEND;
+		
+		    var fileStream : FileStream = new FileStream ();
+		    fileStream.open (file, fileMode);
+
+            fileStream.writeMultiByte ("event size "+evt.afterBounds.width+ " "+evt.afterBounds.height+ "\n",File.systemCharset);
+
+               fileStream.close();
+		
+          }
+		
 			
+          public function handleFullscreen(e:NativeWindowDisplayStateEvent):void{
+              var tempwidth:int, tempheight:int;
+               tempwidth = e.target.bounds.width - gfx.windowboundsx;
+               tempheight = e.target.bounds.height - gfx.windowboundsy;
+               _resizeWindow(tempwidth,tempheight,true);
+          }
 			
 		
-		private function handleResize(e:Event):void {
+		private function handleResize(e:NativeWindowBoundsEvent):void {
 			// adjust the gui to fit the new device resolution
 			var tempwidth:int, tempheight:int;
+               var updateNative:Boolean = false;
+               
+
 			if (e != null) {
 				e.preventDefault();
-				tempwidth = e.target.stageWidth;
-				tempheight = e.target.stageHeight;
+
+                // if(e.beforeBounds.width == e.afterBounds.width && e.beforeBounds.height == e.afterBounds.height)
+                  //  return;
+
+				tempwidth = e.afterBounds.width - gfx.windowboundsx;
+				tempheight = e.afterBounds.height - gfx.windowboundsy;
+                     
 			}else {
 				tempwidth = gfx.windowwidth;
 				tempheight = gfx.windowheight;
+                    updateNative = true;
 			}
 			
+			_resizeWindow(tempwidth,tempheight,updateNative);
+		}
+
+          private function _resizeWindow(tempwidth:int,tempheight:int,updatenative:Boolean):void
+          {
+               // adjust the gui to fit the new device resolution
 			control.savescreencountdown = 30; //Half a second after a resize, save the settings
 			control.minresizecountdown = 5; //Force a minimum screensize
-			gfx.changewindowsize(tempwidth, tempheight);
+
+			gfx.changewindowsize(tempwidth, tempheight,updatenative);
 			
 			gfx.patternmanagerx = gfx.screenwidth - 116;
 			gfx.patterneditorheight = (gfx.windowheight - (gfx.pianorollposition - (gfx.linesize + 2))) / 12;
 			gfx.notesonscreen = ((gfx.screenheight - gfx.pianorollposition - gfx.linesize) / gfx.linesize) + 1;
+
 			gfx.tf_1.width = gfx.windowwidth;
 			gfx.updateboxsize();
 			
@@ -150,7 +195,7 @@ package{
 				gfx.screen.scaleX = 1;
 				gfx.screen.scaleY = 1;
 			}
-		}
+          }
 		
 		private function _startMainLoop():void {
 				NativeApplication.nativeApplication.addEventListener(Event.ACTIVATE, __activate__);
@@ -225,6 +270,11 @@ package{
 			}else {
 				stage.displayState = StageDisplayState.NORMAL;
 			}
+
+               var tempwidth:int, tempheight:int;
+               tempwidth = stage.nativeWindow.bounds.width - gfx.windowboundsx;
+               tempheight = stage.nativeWindow.bounds.height - gfx.windowboundsy;
+               _resizeWindow(tempwidth,tempheight,true);
 			
 			control.savescreensettings();
 		}
@@ -251,6 +301,8 @@ package{
 		private var	_current:Number = 0;
 		private var	_delta:Number = 0;
 		private var	_timer:Timer = new Timer(4);
+
+		
 		
 		//Embedded resources:		
 		[Embed(source = 'graphics/icons.png')]	private var im_icons:Class;

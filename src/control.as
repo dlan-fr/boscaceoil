@@ -396,7 +396,7 @@ package {
 				gfx.windowheight = programsettings.data.windowheight;
 			}
 			
-			gfx.changewindowsize(gfx.windowwidth, gfx.windowheight);
+			gfx.changewindowsize(gfx.windowwidth, gfx.windowheight,true);
 			
 			programsettings.flush();
 			programsettings.close();
@@ -416,7 +416,7 @@ package {
 			programsettings.data.scalemode = gfx.scalemode;
 			programsettings.data.windowwidth = gfx.windowwidth;
 			programsettings.data.windowheight = gfx.windowheight;
-			
+
 			programsettings.flush();
 			programsettings.close();
 		}
