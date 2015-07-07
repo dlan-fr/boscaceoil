@@ -34,6 +34,12 @@ Desktop builds will now have to be compiled with the -define+=CONFIG::desktop,tr
 Likewise, web builds will have to be compiled with -define+=CONFIG::desktop,false -define+=CONFIG::web,true.
 
 
+### Building the linux version
+
+The linux version is built using [AirMiniBuilder](https://code.google.com/p/minibuilder/) along with the latest [Adobe AIR SDK](http://airdownload.adobe.com/air/lin/download/2.6/AdobeAIRInstaller.bin) available for linux (v2.6) 
+
+
+
 ### Running
 
 The AIR application description file, `application.xml`, tells AIR about the application you'd like to create from which movie files.
