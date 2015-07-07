@@ -1,10 +1,16 @@
---password
-boscav2linuxdlan
-
-
 --certificate creation
 ./adt -certificate -cn SelfSigned 1024-RSA sampleCert.pfx <password>
 
---deb package creation
-/opt/AdobeAirSDK/bin/adt -package -storetype pkcs12 -keystore /opt/AdobeAirSDK/bin/sampleCert.pfx -target native BoscaCeoil.deb application-linux.xml BoscaCeoil.swf assets fix_sound_latency.sh README.md changelog.txt
+--air package creation
+/opt/AdobeAirSDK/bin/adt -package -storetype pkcs12 -keystore /opt/AdobeAirSDK/bin/sampleCert.pfx BoscaCeoilv2.air application-linux.xml Boscalinux.swf assets fix_sound_latency.sh README.md changelog.txt
+
+
+--tar package
+
+tar -zcvf BoscaCeoilv2.tar.gz BoscaCeoil/
+
+-- execute bosca ceoil manually
+
+/opt/AdobeAirSDK/bin/adl -nodebug /opt/BoscaCeoil/share/META-INF/AIR/application.xml  /opt/BoscaCeoil/
+
 

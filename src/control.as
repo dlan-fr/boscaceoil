@@ -1246,11 +1246,13 @@ package {
 		}
 		
 		public static function saveceol():void {
+               _driver.pause();
 			file = File.desktopDirectory.resolvePath("*.ceol");
       file.addEventListener(Event.SELECT, onsaveceol);
 			file.browseForSave("Save .ceol File");
 			
 			fixmouseclicks = true;
+               _driver.resume();
 		}
 		
 		private static function onsaveceol(e:Event):void {    
@@ -1272,10 +1274,11 @@ package {
 		}
 		
 		public static function loadceol():void {
+               _driver.pause();
 			file = File.desktopDirectory.resolvePath("");
       file.addEventListener(Event.SELECT, onloadceol);
 			file.browseForOpen("Load .ceol File", [ceolFilter]);
-			
+			_driver.resume();
 			fixmouseclicks = true;
 		}
 		
@@ -1311,6 +1314,7 @@ package {
 		}
 
 		public static function exportxm():void {
+               _driver.pause();
 			stopmusic();
 			
 			file = File.desktopDirectory.resolvePath("*.xm");
@@ -1318,6 +1322,7 @@ package {
 			file.browseForSave("Export .XM module file");
 			
 			fixmouseclicks = true;
+               _driver.resume();
 		}
 
 		private static function onexportxm(e:Event):void {
@@ -1340,6 +1345,7 @@ package {
 		}
 
 		public static function exportmml():void {
+               _driver.pause();
 			stopmusic();
 
 			file = File.desktopDirectory.resolvePath("*.mml");
@@ -1347,6 +1353,7 @@ package {
 			file.browseForSave("Export MML music text file");
 
 			fixmouseclicks = true;
+               _driver.resume();
 		}
 
 		private static function onexportmml(e:Event):void {
@@ -1473,12 +1480,14 @@ package {
 			_data.position = 0;
 			_wav.writeBytes(_data);
 			
+               _driver.pause();
 			file = File.desktopDirectory.resolvePath("*.wav");
 			file.addEventListener(Event.SELECT, onsavewav);
 			file.browseForSave("Export .wav File");
 			
 			
 			fixmouseclicks = true;
+               _driver.resume();
 		}
 		
 		public static function changetab(newtab:int):void {

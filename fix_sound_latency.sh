@@ -1,2 +1,2 @@
 #!/bin/bash
-PULSE_LATENCY_MSEC=20 ./BoscaCeoil
+PULSE_LATENCY_MSEC=80 ./BoscaCeoil
