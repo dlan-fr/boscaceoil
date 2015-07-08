@@ -67,10 +67,7 @@ package{
 			key = new KeyPoll(stage);
 			control.init();
 			
-			//Working towards resolution independence!
-               gfx.windowboundsx = stage.nativeWindow.bounds.width - stage.stageWidth;
-	          gfx.windowboundsy = stage.nativeWindow.bounds.height - stage.stageHeight;
-
+			
 			stage.nativeWindow.addEventListener(NativeWindowBoundsEvent.RESIZING,handleResize);
                stage.nativeWindow.addEventListener(NativeWindowDisplayStateEvent.DISPLAY_STATE_CHANGE,handleFullscreen);
                stage.frameRate = 30;
@@ -102,7 +99,16 @@ package{
 			addChild(gfx.screen);
 			
 			control.loadscreensettings();
+
+               gfx.windowboundsx = stage.nativeWindow.bounds.width - stage.stageWidth;
+	          gfx.windowboundsy = stage.nativeWindow.bounds.height - stage.stageHeight;
+
+               tmpBoundx = gfx.windowboundsx;
+               tmpBoundy = gfx.windowboundsy;
+               tmpWidth = stage.nativeWindow.bounds.width - gfx.windowboundsx;
+               tmpHeight = stage.nativeWindow.bounds.height - gfx.windowboundsy;
 			updategraphicsmode();
+              
 			
 			gfx.changescalemode(gfx.scalemode);
 			
@@ -137,6 +143,8 @@ package{
 
 				tempwidth = e.afterBounds.width - gfx.windowboundsx;
 				tempheight = e.afterBounds.height - gfx.windowboundsy;
+                    tmpWidth = tempwidth;
+                    tmpHeight = tempheight;
                      
 			}else {
 				tempwidth = gfx.windowwidth;
@@ -247,20 +255,25 @@ package{
 		public function updategraphicsmode():void {
 			stage.scaleMode = StageScaleMode.NO_SCALE;
 			stage.align = StageAlign.TOP_LEFT;
+
+               var tempwidth:int, tempheight:int;
 			
 		 	if (control.fullscreen) {
 				stage.displayState = StageDisplayState.FULL_SCREEN_INTERACTIVE;
+                    gfx.windowboundsx = gfx.windowboundsy = 0;
+                    tempwidth = stage.nativeWindow.bounds.width;
+                    tempheight = stage.nativeWindow.bounds.height;
 			}else {
 				stage.displayState = StageDisplayState.NORMAL;
+                     gfx.windowboundsx = tmpBoundx;
+                     gfx.windowboundsy = tmpBoundy;
+                     tempwidth = tmpWidth;
+                     tempheight = tmpHeight;
 			}
 
                //reinit window bounds when changing display state
-               gfx.windowboundsx = stage.nativeWindow.bounds.width - stage.stageWidth;
-               gfx.windowboundsy = stage.nativeWindow.bounds.height - stage.stageHeight;
-
-               var tempwidth:int, tempheight:int;
-               tempwidth = stage.nativeWindow.bounds.width - gfx.windowboundsx;
-               tempheight = stage.nativeWindow.bounds.height - gfx.windowboundsy;
+     
+              
                _resizeWindow(tempwidth,tempheight,true);
 			
 			control.savescreensettings();
@@ -288,8 +301,11 @@ package{
 		private var	_current:Number = 0;
 		private var	_delta:Number = 0;
 		private var	_timer:Timer = new Timer(4);
-
 		
+          private var tmpBoundx:int = 0;
+          private var tmpBoundy:int = 0;
+          private var tmpWidth:int = 0;
+          private var tmpHeight:int = 0;
 		
 		//Embedded resources:		
 		[Embed(source = 'graphics/icons.png')]	private var im_icons:Class;

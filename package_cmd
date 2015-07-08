@@ -7,7 +7,7 @@
 
 --tar package
 
-tar -zcvf BoscaCeoilv2.tar.gz BoscaCeoil/
+tar -zcvf BoscaCeoilv2.tar.gz Boscaceoil/
 
 -- execute bosca ceoil manually
 
