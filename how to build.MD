@@ -36,7 +36,7 @@ Likewise, web builds will have to be compiled with -define+=CONFIG::desktop,fals
 
 ### Building the linux version
 
-The linux version is built using [AirMiniBuilder](https://code.google.com/p/minibuilder/) along with the latest [Adobe AIR SDK](http://airdownload.adobe.com/air/lin/download/2.6/AdobeAIRInstaller.bin) available for linux (v2.6) 
+The linux version is built using [AirMiniBuilder](https://code.google.com/p/minibuilder/) along with the latest [Adobe AIR SDK](http://airdownload.adobe.com/air/lin/download/2.6/AdobeAIRSDK.tbz2) available for linux (v2.6) 
 
 
 
