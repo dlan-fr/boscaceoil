@@ -1,4 +1,4 @@
-﻿public function logic(key:KeyPoll):void {
+public function logic(key:KeyPoll):void {
 	var i:int, j:int, k:int;
 	
 	if (control.arrangescrolldelay > 0) {
@@ -49,4 +49,11 @@
 			control.arrange.viewstart = control.arrange.currentbar;
 		}
 	}
+	
+	if(control.dosaveWav)
+     {
+          control.savewav();
+     }
+	
+	
 }

@@ -60,22 +60,25 @@ package {
 		
 		public static function openfile():void {
 			control.stopmusic();	
-			
+			control._driver.pause();
 			file = File.desktopDirectory.resolvePath("");
 		  file.addEventListener(Event.SELECT, onloadmidi);
 			file.browseForOpen("Load .mid File", [midiFilter]);
 			
 			control.fixmouseclicks = true;
+               control._driver.resume();
 		}
 		
 		public static function savemidi():void {
 			control.stopmusic();	
-			
+			control._driver.pause();
+
 			file = File.desktopDirectory.resolvePath("*.mid");
       file.addEventListener(Event.SELECT, onsavemidi);
 			file.browseForSave("Save .mid File");
 			
 			control.fixmouseclicks = true;
+               control._driver.resume();
 		}
 		
 		private static function onsavemidi(e:Event):void {    

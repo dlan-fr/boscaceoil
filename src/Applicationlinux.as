@@ -48,7 +48,6 @@ package{
 	import flash.utils.getTimer;
 	import flash.utils.Timer;
 	import flash.events.InvokeEvent;
-	import flash.filesystem.*;
 	import flash.desktop.NativeApplication;
 
 	public class Applicationlinux extends Sprite{
@@ -74,6 +73,7 @@ package{
 
 			stage.nativeWindow.addEventListener(NativeWindowBoundsEvent.RESIZING,handleResize);
                stage.nativeWindow.addEventListener(NativeWindowDisplayStateEvent.DISPLAY_STATE_CHANGE,handleFullscreen);
+               stage.frameRate = 30;
 
 			gfx.init(stage);	
 		
@@ -115,23 +115,6 @@ package{
               
 		}
 		
-
-          private function winresize(evt:NativeWindowBoundsEvent):void
-          {
-               evt.preventDefault();
-               var file : File = File.desktopDirectory.resolvePath("/home/user/Projects/Output.log");
-		    var fileMode : String = FileMode.APPEND;
-		
-		    var fileStream : FileStream = new FileStream ();
-		    fileStream.open (file, fileMode);
-
-            fileStream.writeMultiByte ("event size "+evt.afterBounds.width+ " "+evt.afterBounds.height+ "\n",File.systemCharset);
-
-               fileStream.close();
-		
-          }
-		
-			
           public function handleFullscreen(e:NativeWindowDisplayStateEvent):void{
               var tempwidth:int, tempheight:int;
                tempwidth = e.target.bounds.width - gfx.windowboundsx;
@@ -270,6 +253,10 @@ package{
 			}else {
 				stage.displayState = StageDisplayState.NORMAL;
 			}
+
+               //reinit window bounds when changing display state
+               gfx.windowboundsx = stage.nativeWindow.bounds.width - stage.stageWidth;
+               gfx.windowboundsy = stage.nativeWindow.bounds.height - stage.stageHeight;
 
                var tempwidth:int, tempheight:int;
                tempwidth = stage.nativeWindow.bounds.width - gfx.windowboundsx;

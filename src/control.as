@@ -273,20 +273,22 @@ package {
 			effectname.push("HIGH PASS");  */
 		}
 		
-		public static function _onTimerInterruption():void {
+		public static function _onTimerInterruption():void {               
 			if(musicplaying){
 				if (looptime >= boxcount) {
 					looptime-= boxcount;
 					SetSwing();
 					arrange.currentbar++;
-					if (arrange.currentbar >= arrange.loopend) {
+
+                         if (arrange.currentbar >= arrange.loopend) {
 						arrange.currentbar = arrange.loopstart;
 						if (nowexporting) {
 							musicplaying = false;
-							savewav();
+                                   dosaveWav = true;
 						}
 					}
-					
+
+
 					for (i = 0; i < numboxes; i++) {
 						musicbox[i].isplayed = false;
 					}
@@ -1488,6 +1490,7 @@ package {
 			
 			fixmouseclicks = true;
                _driver.resume();
+               dosaveWav = false;
 		}
 		
 		public static function changetab(newtab:int):void {
@@ -1604,6 +1607,8 @@ package {
 		public static var startup:int = 0, invokefile:String = "null";
 		public static var ctrl:String;
 		
+          public static var dosaveWav:Boolean = false;
+
 		//Global effects
 		public static var effecttype:int;
 		public static var effectvalue:int;
